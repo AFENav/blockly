@@ -3,7 +3,8 @@
 		"authors": [
 			"Bl707",
 			"संजीव कुमार",
-			"Phoenix303"
+			"Phoenix303",
+			"Sfic"
 		]
 	},
 	"VARIABLES_DEFAULT_NAME": "आइटम",
@@ -143,7 +144,7 @@
 	"MATH_MODULO_TITLE": "%1 ÷ %2 का शेषफल",
 	"MATH_MODULO_TOOLTIP": "दो संख्याओं के भाग का शेषफल रिटर्न करें।",
 	"MATH_RANDOM_INT_HELPURL": "https://en.wikipedia.org/wiki/Random_number_generation",
-	"MATH_RANDOM_INT_TITLE": "%1 से % 2 तक रैन्डम पूर्णांक",
+	"MATH_RANDOM_INT_TITLE": "%1 से %2 तक रैन्डम पूर्णांक",
 	"MATH_RANDOM_FLOAT_HELPURL": "https://en.wikipedia.org/wiki/Random_number_generation",
 	"MATH_RANDOM_FLOAT_TITLE_RANDOM": "रैन्डम अंश",
 	"TEXT_TEXT_HELPURL": "https://en.wikipedia.org/wiki/String_(computer_science)",
@@ -229,6 +230,7 @@
 	"LISTS_SET_INDEX_TOOLTIP_INSERT_LAST": "आइटम को सूची के अंत में जोड़ता है।",
 	"LISTS_SET_INDEX_TOOLTIP_INSERT_RANDOM": "आइटम को सूची में रैन्डम्ली इनसर्ट करता है।",
 	"LISTS_GET_SUBLIST_TOOLTIP": "सूची के बताए गये भाग की कॉपी बनता है।",
+	"LISTS_SORT_TYPE_NUMERIC": "अंकीय",
 	"VARIABLES_GET_TOOLTIP": "इस चर का मान रिटर्न करता है।",
 	"VARIABLES_GET_CREATE_SET": "सेट '%1' बनाएँ",
 	"VARIABLES_SET": "सेट करें %1 को %2",
