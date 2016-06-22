@@ -27,7 +27,7 @@
 goog.provide('Blockly.WorkspaceSvg');
 
 // TODO(scr): Fix circular dependencies
-// goog.require('Blockly.Block');
+//goog.require('Blockly.BlockSvg');
 goog.require('Blockly.ConnectionDB');
 goog.require('Blockly.Options');
 goog.require('Blockly.ScrollbarPair');
@@ -63,6 +63,12 @@ Blockly.WorkspaceSvg = function(options) {
   this.SOUNDS_ = Object.create(null);
 };
 goog.inherits(Blockly.WorkspaceSvg, Blockly.Workspace);
+
+/**
+ * Wrapper function called when a resize event occurs.
+ * @type {Array.<!Array>} Data that can be passed to unbindEvent_
+ */
+Blockly.WorkspaceSvg.prototype.resizeHandlerWrapper_ = null;
 
 /**
  * Svg workspaces are user-visible (as opposed to a headless workspace).
@@ -137,6 +143,14 @@ Blockly.WorkspaceSvg.prototype.scrollbar = null;
  * @private
  */
 Blockly.WorkspaceSvg.prototype.lastSound_ = null;
+
+/**
+ * Save resize handler data so we can delete it later in dispose.
+ * @param {!Array.<!Array>} handler Data that can be passed to unbindEvent_.
+ */
+Blockly.WorkspaceSvg.prototype.setResizeHandlerWrapper = function(handler) {
+  this.resizeHandlerWrapper_ = handler;
+};
 
 /**
  * Create the workspace DOM elements.
@@ -238,6 +252,10 @@ Blockly.WorkspaceSvg.prototype.dispose = function() {
     // Top-most workspace.  Dispose of the SVG too.
     goog.dom.removeNode(this.getParentSvg());
   }
+  if (this.resizeHandlerWrapper_) {
+    Blockly.unbindEvent_(this.resizeHandlerWrapper_);
+    this.resizeHandlerWrapper_ = null;
+  }
 };
 
 /**
@@ -300,7 +318,26 @@ Blockly.WorkspaceSvg.prototype.addFlyout_ = function() {
 };
 
 /**
- * Resize this workspace and its containing objects.
+ * Resize the parts of the workspace that change when the workspace
+ * contents (e.g. block positions) change.  This will also scroll the
+ * workspace contents if needed.
+ * @package
+ */
+Blockly.WorkspaceSvg.prototype.resizeContents = function() {
+  if (this.scrollbar) {
+    // TODO(picklesrus): Once rachel-fenichel's scrollbar refactoring
+    // is complete, call the method that only resizes scrollbar
+    // based on contents.
+    this.scrollbar.resize();
+  }
+};
+
+/**
+ * Resize and reposition all of the workspace chrome (toolbox,
+ * trash, scrollbars etc.)
+ * This should be called when something changes that
+ * requires recalculating dimensions and positions of the
+ * trash, zoom, toolbox, etc. (e.g. window resize).
  */
 Blockly.WorkspaceSvg.prototype.resize = function() {
   if (this.toolbox_) {
@@ -576,7 +613,6 @@ Blockly.WorkspaceSvg.prototype.onMouseDown_ = function(e) {
   if (Blockly.isTargetInput_(e)) {
     return;
   }
-  Blockly.svgResize(this);
   Blockly.terminateDrag_();  // In case mouse-up event was lost.
   Blockly.hideChaff();
   var isTargetWorkspace = e.target && e.target.nodeName &&
@@ -716,7 +752,7 @@ Blockly.WorkspaceSvg.prototype.cleanUp_ = function() {
   }
   Blockly.Events.setGroup(false);
   // Fire an event to allow scrollbars to resize.
-  Blockly.asyncSvgResize(this);
+  Blockly.resizeSvgContents(this);
 };
 
 /**
@@ -914,7 +950,7 @@ Blockly.WorkspaceSvg.prototype.playAudio = function(name, opt_volume) {
   var sound = this.SOUNDS_[name];
   if (sound) {
     // Don't play one sound on top of another.
-    var now = new Date();
+    var now = new Date;
     if (now - this.lastSound_ < Blockly.SOUND_LIMIT) {
       return;
     }
